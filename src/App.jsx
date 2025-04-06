@@ -8,7 +8,7 @@ const App = () => {
   const [editMode, setEditMode] = useState(null);
 
   const handleOpenDrawer = () => {
-    setEditMode(null); // clear to show fresh add form
+    setEditMode(null);
     setIsDrawerOpen(true);
   };
 
@@ -33,28 +33,16 @@ const App = () => {
             + Add
           </button>
         </div>
-
         <div className="flex">
           <main className="flex-1 pr-6">
-            <DroneList
-              setEditMode={(data) => handleEdit("drone", data)}
-              setIsDrawerOpen={setIsDrawerOpen}
-            />
+            <DroneList onEdit={handleEdit} setIsDrawerOpen={setIsDrawerOpen} />
           </main>
           <aside className="w-80">
-            <UnassignedRigZone
-              setEditMode={(data) => handleEdit("rig", data)}
-              setIsDrawerOpen={setIsDrawerOpen}
-            />
+            <UnassignedRigZone onEdit={handleEdit} setIsDrawerOpen={setIsDrawerOpen} />
           </aside>
         </div>
       </div>
-
-      <AddDrawer
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
-        editData={editMode}
-      />
+      <AddDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer} editData={editMode} />
     </div>
   );
 };

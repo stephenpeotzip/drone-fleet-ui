@@ -19,12 +19,21 @@ const DraggableDroneCard = ({
     drop: (item) => {
       if (item.type === "rig" && item.rig) {
         assignRig(drone.id, item.rig);
+
+        // 🛠 REMOVE rig from original drone if moved
+        if (item.parentDroneId && item.updateDroneRigs) {
+          item.updateDroneRigs(item.parentDroneId, (prevRigs) =>
+            prevRigs.filter((r) => r.id !== item.rig.id)
+          );
+        }
+
+        // 🧹 Remove from unassigned if dragged from pool
         if (typeof item.removeFromUnassigned === "function") {
           item.removeFromUnassigned(item.rig.id);
         }
       }
     },
-    hover(item, monitor) {
+    hover(item) {
       if (item.type !== "drone" || !ref.current) return;
       const dragIndex = item.index;
       const hoverIndex = index;
@@ -59,10 +68,16 @@ const DraggableDroneCard = ({
           <p className="text-sm text-gray-500">Batteries: {drone.numBatteries}</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => onEdit({ type: "drone", data: drone })} className="text-blue-600 hover:text-blue-800">
+          <button
+            onClick={() => onEdit("drone", drone)}
+            className="text-blue-600 hover:text-blue-800"
+          >
             ✏️
           </button>
-          <button onClick={onDelete} className="text-red-500 hover:text-red-700">
+          <button
+            onClick={onDelete}
+            className="text-red-500 hover:text-red-700"
+          >
             🗑️
           </button>
         </div>
@@ -78,8 +93,7 @@ const DraggableDroneCard = ({
                 rig={rig}
                 index={i}
                 parentDroneId={drone.id}
-                setEditMode={onEdit}
-                setIsDrawerOpen={() => {}}
+                onEdit={onEdit}
                 updateDroneRigs={updateDroneRigs}
               />
             ))}

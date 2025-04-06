@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import update from "immutability-helper";
 import DraggableDroneCard from "./DraggableDroneCard";
 
-const DroneList = ({ setEditMode, setIsDrawerOpen }) => {
+const DroneList = ({ onEdit, setIsDrawerOpen }) => {
   const [drones, setDrones] = useState([]);
 
   useEffect(() => {
-    // Optional starter drones
     setDrones([
       {
         id: "drone1",
@@ -15,20 +14,18 @@ const DroneList = ({ setEditMode, setIsDrawerOpen }) => {
         faaNumber: "FAA987654321",
         numBatteries: 4,
         rigs: [],
-      },
+      }
     ]);
   }, []);
 
   const moveDrone = (dragIndex, hoverIndex) => {
     const dragged = drones[dragIndex];
-    setDrones(
-      update(drones, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragged],
-        ],
-      })
-    );
+    setDrones(update(drones, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragged]
+      ]
+    }));
   };
 
   const assignRig = (droneId, rig) => {
@@ -58,7 +55,7 @@ const DroneList = ({ setEditMode, setIsDrawerOpen }) => {
         id: `drone-${Date.now()}`,
         ...newDrone,
         rigs: [],
-      },
+      }
     ]);
   };
 
@@ -73,10 +70,8 @@ const DroneList = ({ setEditMode, setIsDrawerOpen }) => {
           moveDrone={moveDrone}
           assignRig={assignRig}
           updateDroneRigs={updateDroneRigs}
-          onEdit={(data) => setEditMode({ type: "drone", data })}
-          onDelete={() =>
-            setDrones((prev) => prev.filter((d) => d.id !== drone.id))
-          }
+          onEdit={onEdit}
+          onDelete={() => setDrones((prev) => prev.filter((d) => d.id !== drone.id))}
         />
       ))}
     </div>

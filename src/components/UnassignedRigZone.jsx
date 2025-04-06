@@ -2,7 +2,7 @@ import React from "react";
 import { useDrop } from "react-dnd";
 import DraggableRig from "./DraggableRig";
 
-const UnassignedRigZone = ({ setEditMode, setIsDrawerOpen }) => {
+const UnassignedRigZone = ({ onEdit, setIsDrawerOpen }) => {
   const [unassignedRigs, setUnassignedRigs] = React.useState([
     { id: "rig1", model: "BYR v2.5" },
     { id: "rig2", model: "Mono Rig" },
@@ -39,9 +39,8 @@ const UnassignedRigZone = ({ setEditMode, setIsDrawerOpen }) => {
               key={rig.id}
               rig={rig}
               index={index}
-              setEditMode={setEditMode}
-              setIsDrawerOpen={setIsDrawerOpen}
               parentDroneId={null}
+              onEdit={onEdit}
               updateDroneRigs={null}
               removeFromUnassigned={removeRigFromUnassigned}
             />

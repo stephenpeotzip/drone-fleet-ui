@@ -5,8 +5,7 @@ const DraggableRig = ({
   rig,
   index,
   parentDroneId,
-  setEditMode,
-  setIsDrawerOpen,
+  onEdit,
   updateDroneRigs,
   removeFromUnassigned,
 }) => {
@@ -35,11 +34,6 @@ const DraggableRig = ({
     }
   };
 
-  const handleEdit = () => {
-    setEditMode({ type: "rig", data: rig });
-    setIsDrawerOpen(true);
-  };
-
   return (
     <div
       ref={drag}
@@ -49,7 +43,7 @@ const DraggableRig = ({
     >
       <span className="truncate max-w-[120px]">{rig.model || "Unnamed Rig"}</span>
       <button
-        onClick={handleEdit}
+        onClick={() => onEdit("rig", rig)}
         className="text-blue-600 hover:text-blue-800"
       >
         ✏️

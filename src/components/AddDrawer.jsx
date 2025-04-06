@@ -10,7 +10,7 @@ const AddDrawer = ({ isOpen, onClose, editData }) => {
     linuxVersion: "",
     appVersion: "",
     tailscaleName: "",
-    label: "",
+    label: ""
   });
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const AddDrawer = ({ isOpen, onClose, editData }) => {
         linuxVersion: "",
         appVersion: "",
         tailscaleName: "",
-        label: "",
+        label: ""
       });
     }
   }, [editData]);
@@ -37,18 +37,11 @@ const AddDrawer = ({ isOpen, onClose, editData }) => {
   };
 
   const handleSave = () => {
-    if (!editData) {
-      switch (formType) {
-        case "drone":
-          window.addDrone?.(formData);
-          break;
-        default:
-          console.log(`Unhandled add type: ${formType}`, formData);
-      }
+    if (!editData && formType === "drone") {
+      window.addDrone?.(formData);
     } else {
-      console.log("Editing existing", formType, formData);
+      console.log("Editing", formType, formData);
     }
-
     onClose();
   };
 
