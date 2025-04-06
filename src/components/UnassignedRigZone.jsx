@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDrop } from "react-dnd";
 import DraggableRig from "./DraggableRig";
 
-const UnassignedRigZone = ({ onEdit, setIsDrawerOpen }) => {
+const UnassignedRigZone = ({ onEdit }) => {
   const [unassignedRigs, setUnassignedRigs] = React.useState([
-    { id: "rig1", model: "BYR v2.5" },
-    { id: "rig2", model: "Mono Rig" },
+    {
+      id: "rig1",
+      model: "BYR v2.5",
+      linuxVersion: "Ubuntu 20.04",
+      appVersion: "1.2.3",
+      tailscaleName: "byr-01"
+    },
+    {
+      id: "rig2",
+      model: "Mono Rig",
+      linuxVersion: "Debian",
+      appVersion: "1.0.5",
+      tailscaleName: "mono-07"
+    }
   ]);
+
+  useEffect(() => {
+    window.addRig = (data) => {
+      const id = `rig-${Date.now()}`;
+      setUnassignedRigs((prev) => [...prev, { ...data, id }]);
+    };
+
+    window.addOther = (data) => {
+      const id = `other-${Date.now()}`;
+      setUnassignedRigs((prev) => [
+        ...prev,
+        {
+          ...data,
+          id,
+          model: data.label || "Other",
+          description: data.description || ""
+        }
+      ]);
+    };
+  }, []);
 
   const removeRigFromUnassigned = (rigId) => {
     setUnassignedRigs((prev) => prev.filter((r) => r.id !== rigId));
@@ -28,12 +60,17 @@ const UnassignedRigZone = ({ onEdit, setIsDrawerOpen }) => {
   });
 
   return (
-    <div ref={drop} className="mt-10 p-4 bg-white border rounded-lg shadow w-80">
-      <h2 className="text-xl font-semibold mb-2">Unassigned Rigs</h2>
+    <div
+      ref={drop}
+      className="p-4 bg-chat-card dark:bg-chat-darkCard border border-chat-border rounded-lg shadow w-80 min-h-[112px] mt-[6px] flex flex-col gap-2"
+    >
+      <h2 className="text-base font-semibold text-chat-text dark:text-chat-darkText mb-1">
+        Unassigned Rigs
+      </h2>
       {unassignedRigs.length === 0 ? (
-        <p className="text-gray-400 text-sm">No unassigned rigs.</p>
+        <p className="text-gray-400 text-sm text-center">No unassigned rigs.</p>
       ) : (
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-col gap-2">
           {unassignedRigs.map((rig, index) => (
             <DraggableRig
               key={rig.id}

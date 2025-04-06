@@ -20,14 +20,12 @@ const DraggableDroneCard = ({
       if (item.type === "rig" && item.rig) {
         assignRig(drone.id, item.rig);
 
-        // 🛠 REMOVE rig from original drone if moved
         if (item.parentDroneId && item.updateDroneRigs) {
           item.updateDroneRigs(item.parentDroneId, (prevRigs) =>
             prevRigs.filter((r) => r.id !== item.rig.id)
           );
         }
 
-        // 🧹 Remove from unassigned if dragged from pool
         if (typeof item.removeFromUnassigned === "function") {
           item.removeFromUnassigned(item.rig.id);
         }
@@ -56,21 +54,21 @@ const DraggableDroneCard = ({
   return (
     <div
       ref={ref}
-      className={`bg-white p-4 rounded-lg shadow transition-opacity ${
-        isDragging ? "opacity-50" : "opacity-100"
-      } cursor-move flex flex-col gap-3`}
+      className={`bg-chat-card dark:bg-chat-darkCard text-chat-text dark:text-chat-darkText border border-chat-border rounded-lg p-4 transition-opacity ${
+        isDragging ? "opacity-40" : "opacity-100"
+      } cursor-move flex flex-col gap-3 shadow-sm`}
     >
       <div className="flex justify-between items-start">
         <div>
           <p className="text-lg font-semibold">{drone.model}</p>
-          <p className="text-sm text-gray-500">Serial: {drone.serial}</p>
-          <p className="text-sm text-gray-500">FAA #: {drone.faaNumber}</p>
-          <p className="text-sm text-gray-500">Batteries: {drone.numBatteries}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Serial: {drone.serial}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">FAA #: {drone.faaNumber}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Batteries: {drone.numBatteries}</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => onEdit("drone", drone)}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
           >
             ✏️
           </button>
@@ -84,8 +82,10 @@ const DraggableDroneCard = ({
       </div>
 
       {Array.isArray(drone.rigs) && drone.rigs.length > 0 && (
-        <div className="pt-2 border-t mt-2">
-          <p className="text-sm font-medium text-gray-600 mb-2">Assigned Rigs:</p>
+        <div className="pt-2 border-t border-gray-200 dark:border-gray-700 mt-2">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
+            Assigned Rigs:
+          </p>
           <div className="flex gap-2 flex-wrap">
             {drone.rigs.map((rig, i) => (
               <DraggableRig
