@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SkyOps</title>
 
-    <!-- ✅ PWA + Icon Support -->
+    <!-- ✅ Favicon + App Icons -->
+    <link rel="icon" href="/icons/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/icons/manifest.json" />
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     <meta name="theme-color" content="#f7f7f8" />
 
-    <!-- ✅ Vite handles JS injection -->
+    <!-- You can optionally include this for SVG support -->
+    <!-- <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" /> -->
   </head>
+
   <body class="bg-[#f7f7f8] text-[#1f1f1f] dark:bg-[#343541] dark:text-[#ececf1]">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

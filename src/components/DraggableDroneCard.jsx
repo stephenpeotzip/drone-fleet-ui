@@ -9,8 +9,7 @@ const DraggableDroneCard = ({
   moveDrone,
   assignRig,
   updateDroneRigs,
-  onEdit,
-  onDelete,
+  onEdit
 }) => {
   const ref = useRef(null);
 
@@ -19,13 +18,11 @@ const DraggableDroneCard = ({
     drop: (item) => {
       if (item.type === "rig" && item.rig) {
         assignRig(drone.id, item.rig);
-
         if (item.parentDroneId && item.updateDroneRigs) {
-          item.updateDroneRigs(item.parentDroneId, (prevRigs) =>
-            prevRigs.filter((r) => r.id !== item.rig.id)
+          item.updateDroneRigs(item.parentDroneId, (prev) =>
+            prev.filter((r) => r.id !== item.rig.id)
           );
         }
-
         if (typeof item.removeFromUnassigned === "function") {
           item.removeFromUnassigned(item.rig.id);
         }
@@ -38,15 +35,15 @@ const DraggableDroneCard = ({
       if (dragIndex === hoverIndex) return;
       moveDrone(dragIndex, hoverIndex);
       item.index = hoverIndex;
-    },
+    }
   });
 
   const [{ isDragging }, drag] = useDrag({
     type: "drone",
     item: { id, index, type: "drone" },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+      isDragging: monitor.isDragging()
+    })
   });
 
   drag(drop(ref));
@@ -71,12 +68,6 @@ const DraggableDroneCard = ({
             className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
           >
             ✏️
-          </button>
-          <button
-            onClick={onDelete}
-            className="text-red-500 hover:text-red-700"
-          >
-            🗑️
           </button>
         </div>
       </div>
