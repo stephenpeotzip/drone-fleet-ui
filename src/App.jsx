@@ -3,7 +3,13 @@ import DroneList from "./components/DroneList";
 import UnassignedZone from "./components/UnassignedZone";
 import AddDrawer from "./components/AddDrawer";
 import { db } from "./firebase";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+  collection
+} from "firebase/firestore";
 
 const App = () => {
   const [drones, setDrones] = useState([]);
@@ -49,100 +55,124 @@ const App = () => {
   };
 
   useEffect(() => {
-    // Seed data from screenshot
-    setDrones([
-      {
-        id: "drone1",
-        type: "drone",
-        model: "M300 - Jordan",
-        serial: "TBD",
-        faaNumber: "TBD",
-        numBatteries: 12,
-        rigs: [
+    const loadFirebaseData = async () => {
+      const droneDocs = await getDocs(collection(db, "drone"));
+      const rigDocs = await getDocs(collection(db, "rig"));
+      const otherDocs = await getDocs(collection(db, "other"));
+
+      const firebaseDrones = droneDocs.docs.map(doc => doc.data());
+      const firebaseRigs = [
+        ...rigDocs.docs.map(doc => doc.data()),
+        ...otherDocs.docs.map(doc => doc.data())
+      ];
+
+      if (firebaseDrones.length || firebaseRigs.length) {
+        setDrones(firebaseDrones);
+        setUnassigned(firebaseRigs);
+      } else {
+        const fallbackDrones = [
           {
-            id: "rig1",
-            type: "rig",
-            model: "BYR v3 Prototype",
-            linuxVersion: "2.8.0",
-            appVersion: "Unknown - Experimental",
-            tailscaleName: "byr-v3"
+            id: "drone1",
+            type: "drone",
+            model: "M300 - Jordan",
+            serial: "TBD",
+            faaNumber: "TBD",
+            numBatteries: 12,
+            rigs: [
+              {
+                id: "rig1",
+                type: "rig",
+                model: "BYR v3 Prototype",
+                linuxVersion: "2.8.0",
+                appVersion: "Unknown - Experimental",
+                tailscaleName: "byr-v3"
+              },
+              {
+                id: "rig2",
+                type: "rig",
+                model: "Zig-Zag",
+                linuxVersion: "2.8.0?",
+                appVersion: "Unknown",
+                tailscaleName: "NA"
+              }
+            ]
           },
           {
-            id: "rig2",
-            type: "rig",
-            model: "Zig-Zag",
-            linuxVersion: "2.8.0?",
-            appVersion: "Unknown",
-            tailscaleName: "NA"
-          }
-        ]
-      },
-      {
-        id: "drone2",
-        type: "drone",
-        model: "DJI M300 - Anderson",
-        serial: "15963A90185468FA",
-        faaNumber: "FA943F91PK",
-        numBatteries: 16,
-        rigs: [
+            id: "drone2",
+            type: "drone",
+            model: "DJI M300 - Anderson",
+            serial: "15963A90185468FA",
+            faaNumber: "FA943F91PK",
+            numBatteries: 16,
+            rigs: [
+              {
+                id: "rig3",
+                type: "rig",
+                model: "BYR v2.5 - Indigo",
+                linuxVersion: "2.8.0",
+                appVersion: "shav250",
+                tailscaleName: "NA"
+              }
+            ]
+          },
           {
-            id: "rig3",
-            type: "rig",
-            model: "BYR v2.5 - Indigo",
-            linuxVersion: "2.8.0",
-            appVersion: "shav250",
-            tailscaleName: "NA"
+            id: "drone3",
+            type: "drone",
+            model: "DJI M300 - Aaron",
+            serial: "1581F12NBY7P00C00FB0",
+            faaNumber: "FAA4WA7NRF",
+            numBatteries: 10,
+            rigs: []
+          },
+          {
+            id: "drone4",
+            type: "drone",
+            model: "DJI M350 - Kyle",
+            serial: "1581F6GK82A5040040W",
+            faaNumber: "FA3HM3WTLH",
+            numBatteries: 8,
+            rigs: []
+          },
+          {
+            id: "drone5",
+            type: "drone",
+            model: "DJI M350 - Stephan",
+            serial: "1581F6GK82AG0400491",
+            faaNumber: "FA3APLXLXR",
+            numBatteries: 8,
+            rigs: []
+          },
+          {
+            id: "drone6",
+            type: "drone",
+            model: "DJI M300 - Aviary",
+            serial: "1581F6GK82AG0400491",
+            faaNumber: "FA3APLXLXR",
+            numBatteries: 8,
+            rigs: []
           }
-        ]
-      },
-      {
-        id: "drone3",
-        type: "drone",
-        model: "DJI M300 - Aaron",
-        serial: "1581F12NBY7P00C00FB0",
-        faaNumber: "FAA4WA7NRF",
-        numBatteries: 10,
-        rigs: []
-      },
-      {
-        id: "drone4",
-        type: "drone",
-        model: "DJI M350 - Kyle",
-        serial: "1581F6GK82A5040040W",
-        faaNumber: "FA3HM3WTLH",
-        numBatteries: 8,
-        rigs: []
-      },
-      {
-        id: "drone5",
-        type: "drone",
-        model: "DJI M350 - Stephan",
-        serial: "1581F6GK82AG0400491",
-        faaNumber: "FA3APLXLXR",
-        numBatteries: 8,
-        rigs: []
-      },
-      {
-        id: "drone6",
-        type: "drone",
-        model: "DJI M300 - Aviary",
-        serial: "1581F6GK82AG0400491",
-        faaNumber: "FA3APLXLXR",
-        numBatteries: 8,
-        rigs: []
-      }
-    ]);
+        ];
 
-    setUnassigned([
-      {
-        id: "rig4",
-        type: "rig",
-        model: "BYR v2.5",
-        linuxVersion: "Ubuntu 20.04",
-        appVersion: "1.2.3",
-        tailscaleName: "byr-01"
+        const fallbackUnassigned = [
+          {
+            id: "rig4",
+            type: "rig",
+            model: "BYR v2.5",
+            linuxVersion: "Ubuntu 20.04",
+            appVersion: "1.2.3",
+            tailscaleName: "byr-01"
+          }
+        ];
+
+        setDrones(fallbackDrones);
+        setUnassigned(fallbackUnassigned);
+
+        fallbackDrones.forEach(d => saveToFirebase(d));
+        fallbackUnassigned.forEach(r => saveToFirebase(r));
       }
-    ]);
+    };
+
+    loadFirebaseData();
 
     window.addAsset = (item) => {
       const id = item.id || `${item.type}-${Date.now()}`;
