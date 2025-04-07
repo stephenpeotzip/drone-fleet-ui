@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import DroneList from "./components/DroneList";
 import UnassignedZone from "./components/UnassignedZone";
 import AddDrawer from "./components/AddDrawer";
+import { db } from "./firebase";
+import { doc, setDoc, deleteDoc } from "firebase/firestore";
 
 const App = () => {
   const [drones, setDrones] = useState([]);
@@ -28,6 +30,22 @@ const App = () => {
     const root = document.documentElement;
     root.classList.toggle("dark");
     setDarkMode(!darkMode);
+  };
+
+  const saveToFirebase = async (asset) => {
+    try {
+      await setDoc(doc(db, asset.type, asset.id), asset);
+    } catch (err) {
+      console.error("Failed to save to Firebase:", err);
+    }
+  };
+
+  const deleteFromFirebase = async (asset) => {
+    try {
+      await deleteDoc(doc(db, asset.type, asset.id));
+    } catch (err) {
+      console.error("Failed to delete from Firebase:", err);
+    }
   };
 
   useEffect(() => {
@@ -135,6 +153,8 @@ const App = () => {
       } else {
         setUnassigned((prev) => [...prev, newItem]);
       }
+
+      saveToFirebase(newItem);
     };
 
     window.updateAsset = (item) => {
@@ -143,11 +163,22 @@ const App = () => {
       } else {
         setUnassigned((prev) => prev.map((a) => (a.id === item.id ? item : a)));
       }
+
+      saveToFirebase(item);
     };
 
     window.deleteAsset = (id) => {
-      setDrones((prev) => prev.filter((d) => d.id !== id));
-      setUnassigned((prev) => prev.filter((a) => a.id !== id));
+      setDrones((prev) => {
+        const match = prev.find((d) => d.id === id);
+        if (match) deleteFromFirebase(match);
+        return prev.filter((d) => d.id !== id);
+      });
+
+      setUnassigned((prev) => {
+        const match = prev.find((a) => a.id === id);
+        if (match) deleteFromFirebase(match);
+        return prev.filter((a) => a.id !== id);
+      });
     };
   }, []);
 
